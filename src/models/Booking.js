@@ -64,7 +64,7 @@ class Booking {
         }
 
         const pool = getPool();
-        const query = 'SELECT * FROM bookings WHERE id = $1 OR booking_reference = $1';
+        const query = 'SELECT * FROM bookings WHERE CAST(id AS TEXT) = $1 OR booking_reference = $1';
         
         try {
             const result = await pool.query(query, [id]);
@@ -120,7 +120,7 @@ class Booking {
         const query = `
             UPDATE bookings 
             SET status = $1, payment_id = COALESCE($2, payment_id), updated_at = CURRENT_TIMESTAMP
-            WHERE id = $3 OR booking_reference = $3
+            WHERE CAST(id AS TEXT) = $3 OR booking_reference = $3
             RETURNING *
         `;
 
