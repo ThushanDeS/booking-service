@@ -11,14 +11,27 @@ const connectDB = async () => {
     }
 
     try {
+        // Build SSL configuration
+        const sslConfig = process.env.DB_SSL === 'true' 
+            ? { 
+                rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false',
+                // For Azure PostgreSQL, we need to allow self-signed certs
+                ca: process.env.DB_CA_CERT || undefined
+              }
+            : false;
+
+        logger.info(`Connecting to PostgreSQL with SSL: ${process.env.DB_SSL === 'true'}`);
+
         pool = new Pool({
             host: process.env.DB_HOST,
             port: process.env.DB_PORT || 5432,
             database: process.env.DB_NAME,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
+            ssl: sslConfig,
             max: 20,
-            idleTimeoutMillis: 30000
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 10000,  // Add connection timeout
         });
 
         await pool.query('SELECT NOW()');

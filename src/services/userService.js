@@ -19,7 +19,7 @@ class UserService {
             logger.info(`📡 Calling User Service: GET /users/${userId}`);
             
             const response = await axios.get(
-                `${USER_SERVICE_URL}/users/${userId}`,
+                `${USER_SERVICE_URL}/api/users/${userId}`,
                 { timeout: 5000 }
             );
             
